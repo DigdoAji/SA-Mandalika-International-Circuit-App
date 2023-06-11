@@ -1,0 +1,50 @@
+#analisis-sentimen-sirkuit-internasional-mandalika span {
+  font-size: 28px !important;
+  margin-bottom: 5px;
+}
+
+.css-zt5igj span {
+  text-align: center;
+  color: black;
+}
+
+.stTextArea .css-1om1ktf .st-bs {
+  background-color: #fff;
+  border: 1px solid black;
+  border-radius: 10px;
+}
+
+.stButton button {
+  background-color: #4d96ff;
+  width: 120px;
+  color: white;
+}
+
+.stButton button p {
+  color: white;
+  font-weight: 600;
+  font-size: 18px !important;
+}
+
+.stButton button:hover {
+  background-color: #447dcf;
+  color: white;
+}
+
+#input-text-kosong span {
+  font-size: 34px !important;
+}
+
+#hasil-analisis-sentimen span {
+  font-size: 34px !important;
+}
+
+.stAlert .st-at {
+  background-color: #379bf7;
+  border-radius: 5px;
+  color: white;
+}
+
+.css-5rimss p {
+  font-weight: bold;
+}

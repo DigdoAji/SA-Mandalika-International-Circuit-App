@@ -7,7 +7,6 @@ import re
 import string
 import preprocessor as pre
 
-
 from transformers import AutoTokenizer
 from transformers import TFBertForSequenceClassification
 from tensorflow import keras
@@ -15,19 +14,15 @@ from tensorflow import keras
 with open("style.css") as f:
     st.markdown('<style>{}</style>'.format(f.read()), unsafe_allow_html=True) 
 
-# Preparation model
-model_path = "D:\LuKanAnakIT\Menuju Tugas Akhir\Tugas Akhir\@Penulisan\Coding\Prototipe1\IndoBERT_Model_M54.h5"
-bertModel_package = 'indobenchmark/indobert-base-p2'
-tokenizer = AutoTokenizer.from_pretrained(bertModel_package, do_lower_case=True)
-keras.utils.get_custom_objects().update({'TFBertForSequenceClassification': TFBertForSequenceClassification})
+# Preparation model and tokenizer
+model_path = "digdoaji/indobert-sentiment-analysis-mandalika-circuit"
+tokenizer = AutoTokenizer.from_pretrained(model_path, do_lower_case=True)
+model = TFBertForSequenceClassification.from_pretrained(model_path)
 
-# load model on first launch
-st.cache_data()
-model = keras.models.load_model(model_path)
-
-# Function to tokenizing input text
+# Define the maximum sequnce length
 seq_max_length = 54
 
+# Function to tokenizing input text
 def tokenizing_data(data):
     for sentence in data:
         sentence = preprocess_text(sentence)

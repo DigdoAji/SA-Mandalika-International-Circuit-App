@@ -1,6 +1,5 @@
 import streamlit as st
 import numpy as np
-import pandas as pd
 import tensorflow as tf
 import transformers
 import re
@@ -9,34 +8,33 @@ import preprocessor as pre
 
 from transformers import AutoTokenizer
 from transformers import TFBertForSequenceClassification
-from tensorflow import keras
 
 with open("style.css") as f:
     st.markdown('<style>{}</style>'.format(f.read()), unsafe_allow_html=True) 
 
 # Preparation model and tokenizer
 model_path = "digdoaji/indobert-sentiment-analysis-mandalika-circuit"
-tokenizer = AutoTokenizer.from_pretrained(model_path, do_lower_case=True)
+tokenizer = AutoTokenizer.from_pretrained(model_path)
 model = TFBertForSequenceClassification.from_pretrained(model_path)
 
-# Define the maximum sequnce length
+# Define the maximum sequence length
 seq_max_length = 54
 
 # Function to tokenizing input text
-def tokenizing_data(data):
-    for sentence in data:
-        sentence = preprocess_text(sentence)
-        encoded = tokenizer.encode_plus(
-            data,
-            add_special_tokens=True,
-            max_length=seq_max_length,
-            truncation=True,
-            padding='max_length',
-            return_tensors='tf'
-        )
+def tokenizing_data(text):
+    text = preprocess_text(text)
+    encoded = tokenizer.encode_plus(
+        text,
+        add_special_tokens=True,
+        max_length=seq_max_length,
+        truncation=True,
+        padding='max_length',
+        return_tensors='tf'
+    )
 
-        input_ids = encoded['input_ids']
-        attention_mask = encoded['attention_mask']
+    input_ids = encoded['input_ids']
+    attention_mask = encoded['attention_mask']
+
     return input_ids, attention_mask
 
 # Function to preprocessing input text
@@ -55,12 +53,13 @@ def preprocess_text(sentence):
 
 # Function to predict sentiment
 def predict_sentiment(input_text):
-    input_ids, attention_mask = tokenizing_data(input_text)
-    prediction = model.predict([input_ids, attention_mask])
-    predict_label = np.round(prediction).flatten()
     label_sentiment = {0: "negatif", 1: "positif"}
-    predict_label = label_sentiment[int(predict_label)]
+    input_ids, attention_mask = tokenizing_data(input_text)
+    prediction = model.predict([input_ids, attention_mask])[0]
+    predict_class = tf.argmax(prediction, axis=1)
+    predict_label = label_sentiment[int(predict_class)]
     return predict_label
+
 
 # Streamlit web app
 def main():

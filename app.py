@@ -22,18 +22,22 @@ seq_max_length = 54
 
 # Function to tokenizing input text
 def tokenizing_data(text):
-    text = preprocess_text(text)
-    encoded = tokenizer.encode_plus(
-        text,
-        add_special_tokens=True,
-        max_length=seq_max_length,
-        truncation=True,
-        padding='max_length',
-        return_tensors='tf'
-    )
+    for sentence in text:
+        sentence = preprocess_text(sentence)
+        encoded = tokenizer.encode_plus(
+            sentence,
+            add_special_tokens=True,
+            max_length=seq_max_length,
+            truncation=True,
+            padding='max_length',
+            return_tensors='tf'
+        )
 
-    input_ids = encoded['input_ids']
-    attention_mask = encoded['attention_mask']
+        input_ids = encoded['input_ids']
+        attention_mask = encoded['attention_mask']
+        
+        input_ids = tf.reshape(input_ids, (1, -1))
+        attention_mask = tf.reshape(attention_mask, (1, -1))
 
     return input_ids, attention_mask
 
@@ -53,31 +57,30 @@ def preprocess_text(sentence):
 
 # Function to predict sentiment
 def predict_sentiment(input_text):
-    label_sentiment = {0: "negatif", 1: "positif"}
     input_ids, attention_mask = tokenizing_data(input_text)
-    prediction = model.predict([input_ids, attention_mask])[0]
-    predict_class = tf.argmax(prediction, axis=1)
-    predict_label = label_sentiment[int(predict_class)]
+    prediction = model.predict([input_ids, attention_mask])
+    predict_class = np.argmax(prediction.logits, axis=-1)[0]
+    label_sentiment = {0: "negative", 1: "positive"}
+    predict_label = label_sentiment[predict_class]
     return predict_label
-
 
 # Streamlit web app
 def main():
-    st.title("Analisis Sentimen Sirkuit Internasional Mandalika", anchor=False)
-    tweet_text = st.text_area(" ", placeholder="Masukkan kalimat yang ingin dianalisis", label_visibility="collapsed")
+    st.title("Sentiment Analysis of Mandalika International Circuit", anchor=False)
+    tweet_text = st.text_area(" ", placeholder="Enter the sentence you want to analyze", label_visibility="collapsed")
     
-    if st.button("KIRIM"):
+    if st.button("SEND"):
         if tweet_text.strip() == "":
-            st.title("Input Teks Kosong", anchor=False)
-            st.info("Mohon isi kalimat yang ingin dianalisis")
+            st.title("Text Input Still Empty", anchor=False)
+            st.info("Please fill in the sentence you want to analyze")
         else:
             sentiment = predict_sentiment(tweet_text)
-            if sentiment == "positif":
-                st.title("Hasil Analisis Sentimen", anchor=False)
-                st.markdown('<div style="background-color: #5d9c59; padding: 16px; border-radius: 5px; font-weight: bold; color:white;">Kalimat tersebut mengandung sentimen positif</div>', unsafe_allow_html=True)
-            if sentiment == "negatif":
-                st.title("Hasil Analisis Sentimen", anchor=False)
-                st.markdown('<div style="background-color: #df2e38; padding: 16px; border-radius: 5px; font-weight: bold; color:white;">Kalimat tersebut mengandung sentimen negatif</div>', unsafe_allow_html=True)
+            if sentiment == "positive":
+                st.title("Sentiment Analysis Results", anchor=False)
+                st.markdown('<div style="background-color: #5d9c59; padding: 16px; border-radius: 5px; font-weight: bold; color:white;">This sentence contains a positive sentiment</div>', unsafe_allow_html=True)
+            elif sentiment == "negative":
+                st.title("Sentiment Analysis Results", anchor=False)
+                st.markdown('<div style="background-color: #df2e38; padding: 16px; border-radius: 5px; font-weight: bold; color:white;">This sentence contains a negative sentiment</div>', unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()

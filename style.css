@@ -1,4 +1,4 @@
-#analisis-sentimen-sirkuit-internasional-mandalika span {
+#sentiment-analysis-of-mandalika-international-circuit span {
   font-size: 28px !important;
   margin-bottom: 5px;
 }
@@ -31,11 +31,11 @@
   color: white;
 }
 
-#input-text-kosong span {
+#text-input-still-empty span {
   font-size: 34px !important;
 }
 
-#hasil-analisis-sentimen span {
+#sentiment-analysis-results span {
   font-size: 34px !important;
 }
 
@@ -45,6 +45,6 @@
   color: white;
 }
 
-.css-5rimss, .css-zfj3zw p {
+.css-5rimss, .css-1w6rlcb p {
   font-weight: bold;
 }

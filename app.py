@@ -21,24 +21,19 @@ model = TFBertForSequenceClassification.from_pretrained(model_path)
 seq_max_length = 54
 
 # Function to tokenizing input text
-def tokenizing_data(text):
-    for sentence in text:
-        sentence = preprocess_text(sentence)
-        encoded = tokenizer.encode_plus(
-            sentence,
-            add_special_tokens=True,
-            max_length=seq_max_length,
-            truncation=True,
-            padding='max_length',
-            return_tensors='tf'
-        )
+def tokenizing_text(sentence):
+    sentence = preprocess_text(sentence)
+    encoded = tokenizer.encode_plus(
+        sentence,
+        add_special_tokens=True,
+        max_length=seq_max_length,
+        truncation=True,
+        padding='max_length',
+        return_tensors='tf'
+    )
 
-        input_ids = encoded['input_ids']
-        attention_mask = encoded['attention_mask']
-        
-        input_ids = tf.reshape(input_ids, (1, -1))
-        attention_mask = tf.reshape(attention_mask, (1, -1))
-
+    input_ids = encoded['input_ids']
+    attention_mask = encoded['attention_mask']
     return input_ids, attention_mask
 
 # Function to preprocessing input text
@@ -57,12 +52,13 @@ def preprocess_text(sentence):
 
 # Function to predict sentiment
 def predict_sentiment(input_text):
-    input_ids, attention_mask = tokenizing_data(input_text)
+    input_ids, attention_mask = tokenizing_text(input_text)
     prediction = model.predict([input_ids, attention_mask])
-    predict_class = np.argmax(prediction.logits, axis=-1)[0]
+    predict_class = np.argmax(prediction.logits).item()
     label_sentiment = {0: "negative", 1: "positive"}
     predict_label = label_sentiment[predict_class]
     return predict_label
+
 
 # Streamlit web app
 def main():

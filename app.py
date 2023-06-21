@@ -38,16 +38,16 @@ def tokenizing_text(sentence):
 
 # Function to preprocessing input text
 def preprocess_text(sentence):
+    re_cleansing = "@\S+|https?:\S+|http?:\S|#[A-Za-z0-9]+|^RT[\s]+|(^|\W)\d+"
     for punctuation in string.punctuation:
-        re_cleansing = "@\S+|https?:\S+|http?:\S|#[A-Za-z0-9]+|^RT[\s]+|(^|\W)\d+"
         sentence = sentence.encode().decode('unicode_escape')
-        sentence = sentence.lower()
         sentence = re.sub(r'\n', ' ', sentence)
         sentence = pre.clean(sentence)
         sentence = re.sub(r'[^\w\s]', ' ', sentence)
         sentence = re.sub(r'[0-9]', ' ', sentence)
         sentence = re.sub(re_cleansing, ' ', sentence).strip()
         sentence = sentence.replace(punctuation, '')
+        sentence = sentence.lower()
     return sentence
 
 # Function to predict sentiment
